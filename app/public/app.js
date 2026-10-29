@@ -5,13 +5,13 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 const SAMPLES = [
-  ["Raise my prices?", "I run a coaching business doing $30k a month with 15 active clients at $2,000 each. I want to raise the price to $3,500. Options: raise for everyone now, raise for new clients only, or keep $2,000. Close rate is about 50% on sales calls. I'm leaning toward raising for everyone because I'm underpaid."],
-  ["First salesperson?", "I'm a solo founder of a B2B SaaS at $25k MRR growing 5% a month. I do every sales call myself (about 20 hours a week) and I'm burning out. Should I hire a full-time account executive at $120k base, hire a part-time commission-only closer, or keep selling myself for six more months? I have $150k in the bank."],
-  ["Second product?", "My agency makes $80k a month building AI automations for dentists. A few clients asked for an AI receptionist product. Should I build the receptionist as a separate SaaS, offer it as an add-on to existing clients only, or stay focused on the agency? Team of 6, about $200k cash."],
-  ["Quit my job?", "I make $180k a year at a tech company. My side business (a paid newsletter) makes $6k a month and grew 8% a month this year. I have 9 months of expenses saved. Should I quit now, quit in 6 months, or keep both and hire a writer?"],
+  ["Raise my prices?", "I run a live online training programme in Nigeria at ₦250,000 per learner, about 8 learners a cohort, one cohort a month. I want to raise the fee to ₦350,000. Options: raise for everyone now, raise for the next cohort only with an early-bird at ₦250,000, or keep ₦250,000. Roughly 1 in 5 WhatsApp enquiries pays. I'm leaning toward raising now because the cohort is fully hands-on."],
+  ["First salesperson?", "I'm a solo founder of an online school in Abuja making about ₦2.5M a month. I answer every WhatsApp enquiry and do every sales call myself (about 20 hours a week) and I'm burning out. Should I hire a full-time sales rep at ₦250,000 a month, use commission-only closers at 15% per sale, or keep selling myself for six more months? I have ₦4M in the bank."],
+  ["Second product?", "My training brand makes ₦3M a month from a live cohort. Past learners keep asking for a self-paced version. Should I build a self-paced course at ₦35,000, sell it only to past enquirers who didn't buy, or stay focused on the live cohort? Team of 3, about ₦5M cash."],
+  ["Quit my job?", "I earn ₦900,000 a month in a corporate job in Lagos. My side business (paid mentorship) makes ₦600,000 a month and grew 8% a month this year. I have 9 months of expenses saved. Should I quit now, quit in 6 months, or keep both and hire an assistant?"],
 ];
 
-const EXAMPLE = "I run a coaching business at $30k a month with 15 clients at $2,000 each. Should I raise to $3,500 for everyone, raise for new clients only, or keep $2,000? Close rate is about 50% and I have $40k in the bank. Success is $45k a month by March. I'm leaning toward raising for everyone because I'm underpaid.";
+const EXAMPLE = "I run a live online training programme at ₦250,000 per learner, 8 learners a month. Should I raise to ₦350,000 for everyone, raise for the next cohort only, or keep ₦250,000? About 1 in 5 enquiries pays and I have ₦3M in the bank. Success is ₦3M a month by March. I'm leaning toward raising for everyone because the cohort is fully hands-on.";
 
 // The how-to, shown in the side panel while the room is empty and in "How it works".
 const GUIDE = `
@@ -69,7 +69,7 @@ function drawnBust(key, shape) {
   const id = `${key}-${shape}`;
   if (bustCache.has(id)) return bustCache.get(id);
   const s = state.byKey[key] || {};
-  const c = /^#[0-9a-f]{6}$/i.test(s.color || "") ? s.color : "#37bdf8";
+  const c = /^#[0-9a-f]{6}$/i.test(s.color || "") ? s.color : "#e0b04a";
   const initials = esc((s.initials || s.short || key).slice(0, 3).toUpperCase());
   const eyes = shape === "blink"
     ? `<path d="M226 250h30M304 250h30" stroke="#1d2733" stroke-width="7" stroke-linecap="round"/>`
@@ -139,7 +139,7 @@ async function watchForLive() {
   attach(id);
 }
 
-// AIS arrival: a heading types in a character at a time, blur to sharp
+// Arrival: a heading types in a character at a time, blur to sharp
 function typeIn(el) {
   if (!el) return;
   const text = el.textContent;
@@ -509,7 +509,7 @@ function captionFor(who) {
   c.style.animation = "none"; void c.offsetWidth; c.style.animation = "";
   const s = state.byKey[who];
   $("#capAv").className = `cap-av${s ? "" : " chair"}`;
-  $("#capAv").innerHTML = `<img src="${s ? portrait(who) : "/brand/ais-symbol.png"}" alt="">`;
+  $("#capAv").innerHTML = `<img src="${s ? portrait(who) : "/brand/bp-symbol.png"}" alt="">`;
   $("#capWho").textContent = s ? s.name : "The Chair";
 }
 

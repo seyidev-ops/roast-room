@@ -1,5 +1,5 @@
-/* AI Automation Society. Brand guidelines v1 (Oct 2026): Montserrat only, dark blue grounds,
-   black and white lead, AIS Blue #37bdf8 as the accent only, no blue fills or gradients. */
+/* Business Play. Montserrat, dark ink grounds, black and white lead,
+   Business Play Gold #e0b04a as the single accent only. */
 :root {
   --canvas: #07121c;
   --surface: #0a1824;
@@ -10,9 +10,9 @@
   --ink: #ffffff;
   --ink-soft: #c9d1dc;
   --ink-mute: #96a2b5;
-  --accent: #37bdf8;
-  --accent-deep: #37bdf8;
-  --accent-soft: rgba(55, 189, 248, 0.12);
+  --accent: #e0b04a;
+  --accent-deep: #e0b04a;
+  --accent-soft: rgba(224, 176, 74, 0.12);
   --go: #3fcf8e;
   --amend: #ff9025;
   --dissent: #ff5a4f;
@@ -35,7 +35,7 @@ body {
 button { font: inherit; cursor: pointer; }
 [hidden] { display: none !important; }
 .muted { color: var(--ink-mute); }
-::selection { background: rgba(55, 189, 248, 0.3); color: var(--ink); }
+::selection { background: rgba(224, 176, 74, 0.3); color: var(--ink); }
 * { caret-color: var(--accent); }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -96,7 +96,7 @@ button { font: inherit; cursor: pointer; }
   position: relative; width: 100%; aspect-ratio: 16 / 9.4; max-height: calc(100vh - 120px); min-height: 520px;
   border-radius: 20px; overflow: hidden; border: 1px solid var(--hairline);
   background:
-    radial-gradient(70% 40% at 50% 52%, rgba(55, 189, 248, 0.07), transparent 70%),
+    radial-gradient(70% 40% at 50% 52%, rgba(224, 176, 74, 0.07), transparent 70%),
     linear-gradient(180deg, #0a1a28 0%, #07121c 60%, #050d15 100%);
 }
 .wall {
@@ -107,7 +107,7 @@ button { font: inherit; cursor: pointer; }
 }
 .spot {
   position: absolute; width: 380px; height: 380px; border-radius: 50%; pointer-events: none; z-index: 2;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.10), rgba(55, 189, 248, 0.05) 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.10), rgba(224, 176, 74, 0.05) 45%, transparent 70%);
   opacity: 0; transform: translate(-50%, -50%); transition: left .55s var(--ease-out), top .55s var(--ease-out), opacity .4s;
 }
 .spot.on { opacity: 1; }
@@ -168,7 +168,7 @@ button { font: inherit; cursor: pointer; }
   box-shadow:
     inset 0 1.5px 0 rgba(255, 255, 255, 0.22),
     inset 0 18px 40px rgba(255, 255, 255, 0.03),
-    0 -18px 70px rgba(55, 189, 248, 0.07);
+    0 -18px 70px rgba(224, 176, 74, 0.07);
 }
 .table .etch { position: absolute; left: 50%; top: 30%; width: 11%; translate: -50% -50%; opacity: .06; }
 
@@ -389,7 +389,7 @@ button { font: inherit; cursor: pointer; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
 
-/* AIS arrival: blocks fade and rise, headings type in per character */
+/* Arrival: blocks fade and rise, headings type in per character */
 .arrive { animation: rise 1s var(--ease-out) both; }
 .typein .ch { display: inline-block; opacity: 0; filter: blur(6px); animation: chin .5s var(--ease-out) forwards; white-space: pre; }
 @keyframes chin { to { opacity: 1; filter: blur(0); } }
@@ -474,7 +474,7 @@ button { font: inherit; cursor: pointer; }
 #guideDialog .guide { margin-bottom: 14px; }
 #guideDialog h3 { margin-bottom: 14px; }
 
-/* primary pill (white on dark, per the AIS guidelines) */
+/* primary pill (white on dark, per the house style) */
 .pill { background: #ffffff; color: #07121c; border: 0; border-radius: 999px; padding: 8px 16px; font-weight: 700; font-size: 13px; transition: background .2s; }
 .pill:hover { background: #e6edf5; }
 .pill:disabled { opacity: .6; cursor: progress; }

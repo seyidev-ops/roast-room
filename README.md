@@ -1,4 +1,6 @@
-# Roast Room
+# Roast Room · Business Play edition
+
+Your business context lives in `business.md`. The Chair reads it before every council, so keep the numbers current. Money is in naira (₦) by default.
 
 ![The Roast Room](docs/room.jpg)
 
@@ -32,11 +34,11 @@ Those seven are the **default board**. Five more advisors are on call, and the C
 ## Setup
 
 ```bash
-git clone https://github.com/nateherkai/roast-room.git
+git clone https://github.com/seyidev-ops/roast-room.git
 cd roast-room
 ```
 
-Or open Claude Code anywhere and say: "Clone github.com/nateherkai/roast-room and start the room for me."
+Or open Claude Code anywhere and say: "Clone github.com/seyidev-ops/roast-room and start the room for me."
 
 ## Run a roast
 
@@ -62,10 +64,10 @@ The council is only as good as what you give it. Include:
 Left something out? The Chair asks before the council starts. Example:
 
 ```
-/roast-room I run a coaching business at $30k a month with 15 clients at $2,000 each.
-Should I raise to $3,500 for everyone, raise for new clients only, or keep $2,000?
-Close rate is about 50% and I have $40k in the bank. Success is $45k a month by March.
-I'm leaning toward raising for everyone because I'm underpaid.
+/roast-room I run a live online training programme at ₦250,000 per learner, 8 learners a month.
+Should I raise to ₦350,000 for everyone, raise for the next cohort only, or keep ₦250,000?
+About 1 in 5 enquiries pays and I have ₦3M in the bank. Success is ₦3M a month by March.
+I'm leaning toward raising for everyone because the cohort is fully hands-on.
 ```
 
 More ways to run it:
@@ -172,4 +174,4 @@ If you'd rather type a decision straight into the room, copy `.env.example` to `
 
 These are simulations built from each person's public work, and so is any advisor you add. They are not the people, they don't speak for them, and none of them is affiliated with or endorses this project. A seat only quotes a person verbatim when the line is in its brain with a source, and `python .claude/skills/roast-room/scripts/check_quotes.py sessions/<session>` checks every quote in a council against the brains. Each brain's `sources.md` lists what it was built from.
 
-Built by AI Automation Society. The code is MIT licensed; see `LICENSE`. The PDF builder bundles [jsPDF](https://github.com/parallax/jsPDF) (MIT) and [Montserrat](https://github.com/JulietaUla/Montserrat) (SIL Open Font License); their licenses sit next to them in `app/public/`.
+Business Play edition, adapted from [Roast Room](https://github.com/nateherkai/roast-room) by AI Automation Society. The code is MIT licensed; see `LICENSE`. The PDF builder bundles [jsPDF](https://github.com/parallax/jsPDF) (MIT) and [Montserrat](https://github.com/JulietaUla/Montserrat) (SIL Open Font License); their licenses sit next to them in `app/public/`.

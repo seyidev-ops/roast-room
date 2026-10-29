@@ -8,3 +8,10 @@ This project is the Roast Room: a council of simulated advisors that debates a f
 - Councils are saved in `sessions/<date>-<decision>/`. The room plays them live as those files land. Follow `.claude/skills/roast-room/references/live-room.md` exactly so the room can read them.
 - The seats are simulations built from public work. Never present a seat's words as something the real person said unless it is a verbatim quote with a source id from that seat's brain.
 - Write the Chair's parts in plain English: short sentences, no hype, no filler. Keep the verdict in chat short enough to decide from at a glance; the full report goes in `verdict.md`, and the room's "Download PDF" button turns it into a branded PDF.
+
+## Business Play edition
+
+- The founder is Oluwaseyi Ashiru, Business Play Limited, Abuja. Read `business.md` before Step 1 of every council and use its numbers instead of asking for them again. Ask only for what is missing or marked (fill in).
+- Money is in Nigerian naira (₦) unless the founder says otherwise. Write amounts as ₦250,000 or ₦2.5M. When a seat's framework uses dollars, convert with the rate in `business.md` and say so.
+- Advisors' examples come from US markets. In Chair notes, flag where Nigerian realities change the math: WhatsApp-led sales, bank-transfer and Paystack/Selar payments, sponsor-paid learners, naira volatility, and power and data costs for learners.
+- The room and PDF carry the Business Play brand (gold accent). Do not reintroduce AI Automation Society branding.
