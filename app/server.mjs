@@ -45,8 +45,11 @@ async function verifyPayment(ref) {
 const RUNNER = PUBLIC_MODE || (process.env.COUNCIL_RUNNER || env("COUNCIL_RUNNER") || "viewer").toLowerCase() === "api" ? "api" : "viewer";
 if (!PUBLIC_MODE) watch.startWatching();
 
+// The room's page lives on oluwaseyiashiru.com; this engine answers it from another address.
+const ORIGINS = (process.env.ALLOWED_ORIGINS || "").split(",").map((x) => x.trim()).filter(Boolean);
+function cors(res) { const o = res.__origin || ""; return ORIGINS.includes(o) ? { "access-control-allow-origin": o, "vary": "Origin", "access-control-allow-headers": "content-type", "access-control-allow-methods": "GET, POST, OPTIONS" } : {}; }
 function send(res, code, body, type = "application/json") {
-  res.writeHead(code, { "content-type": type, "cache-control": "no-store" });
+  res.writeHead(code, { "content-type": type, "cache-control": "no-store", ...cors(res) });
   res.end(typeof body === "string" ? body : JSON.stringify(body));
 }
 
@@ -59,12 +62,14 @@ async function readJson(req) {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const p = url.pathname;
+  res.__origin = req.headers.origin || "";
+  if (req.method === "OPTIONS") { res.writeHead(204, cors(res)); return res.end(); }
   try {
     if (p === "/api/seats") {
       // portraits: which of the four mouth shapes exist for each seat (a seat with none gets a drawn bust)
       const frame = (key, sh) => ["webp", "png", "jpg"].map((x) => `${key}-${sh}.${x}`).find((f) => fs.existsSync(path.join(PUBLIC, "portraits", f)));
       const seats = loadRoster().map((s) => ({ ...s, portraits: Object.fromEntries(["base", "open", "mid", "blink"].map((sh) => [sh, frame(s.key, sh)]).filter(([, f]) => f).map(([sh, f]) => [sh, `/portraits/${f}`])) }));
-      if (PUBLIC_MODE) for (const x of seats) x.portraits = {}; // archetypes are drawn, not likenesses
+      if (PUBLIC_MODE && process.env.ARCHETYPES === "1") for (const x of seats) x.portraits = {}; // archetypes are drawn, not likenesses
       return send(res, 200, { seats, board: BOARD, models: MODELS, runner: RUNNER, hasKey: Boolean(env("ANTHROPIC_API_KEY")), public: PUBLIC_MODE, pay: PUBLIC_MODE ? { link: PAY.link, priceNgn: PAY.priceNgn, priceUsd: PAY.priceUsd, site: PAY.site } : null });
     }
     if (p === "/api/usage") return send(res, 200, PUBLIC_MODE ? {} : usage);
@@ -95,7 +100,7 @@ const server = http.createServer(async (req, res) => {
       const id = decodeURIComponent(p.split("/").pop());
       const s = getSession(id) || watch.getLive(id);
       if (!s) return send(res, 404, { error: "no such session" });
-      res.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-store", connection: "keep-alive" });
+      res.writeHead(200, { "content-type": "text/event-stream", "cache-control": "no-store", connection: "keep-alive", ...cors(res) });
       res.write(": connected\n\n");
       const ping = setInterval(() => res.write(": ping\n\n"), 15000);
       res.on("close", () => clearInterval(ping));

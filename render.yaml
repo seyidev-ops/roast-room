@@ -26,5 +26,7 @@ services:
         value: "10"
       - key: SITE_URL
         value: "https://oluwaseyiashiru.com/"
+      - key: ALLOWED_ORIGINS
+        value: "https://oluwaseyiashiru.com,https://www.oluwaseyiashiru.com"
       - key: MAX_RUNNING
         value: "3"

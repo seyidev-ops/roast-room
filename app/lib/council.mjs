@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { SEATS, BOARD, byKey, systemFor, parseCard, checkQuotes, defaultBoard, loadRoster, PUBLIC } from "./seats.mjs";
+import { SEATS, BOARD, byKey, systemFor, parseCard, checkQuotes, defaultBoard, loadRoster, PUBLIC, ARCHETYPE_NAMES } from "./seats.mjs";
 import * as ai from "./anthropic.mjs";
 import { S } from "./anthropic.mjs";
 import { SESSIONS_DIR } from "./env.mjs";
@@ -14,7 +14,7 @@ export const MODELS = {
 const chairSystem = (st) => {
   const seats = st.board.map((k) => byKey[k]);
   return `You are the Chair of a Roast Room council: ${seats.length} simulated advisors built from the public work of ${seats.map((x) => `${x.name} (${x.pillar.toLowerCase()})`).join(", ")}.
-${PUBLIC ? "The seats are archetypes. Never write any real person's name; refer to seats only by their display names. Use the founder's own currency; if none is given, use naira (₦) for Nigerian context and dollars otherwise.\n" : ""}You never argue a side and never add your own pillar. You run the room, keep score, and write in plain English: short sentences, no em dashes, no hype, no tee-ups like "here's the thing", no filler. Seat keys (for key fields only): ${seats.map((x) => x.key).join(", ")}. Whenever you write a seat's name in prose or in a seat field, use its display name: ${seats.map((x) => x.short).join(", ")}.`;
+${PUBLIC ? (ARCHETYPE_NAMES ? "The seats are archetypes. Never write any real person's name; refer to seats only by their display names. " : "") + "Use the founder's own currency; if none is given, use naira (₦) for Nigerian context and dollars otherwise. Never claim the real people said or endorsed anything.\n" : ""}You never argue a side and never add your own pillar. You run the room, keep score, and write in plain English: short sentences, no em dashes, no hype, no tee-ups like "here's the thing", no filler. Seat keys (for key fields only): ${seats.map((x) => x.key).join(", ")}. Whenever you write a seat's name in prose or in a seat field, use its display name: ${seats.map((x) => x.short).join(", ")}.`;
 };
 
 export const DISCLAIMER = PUBLIC

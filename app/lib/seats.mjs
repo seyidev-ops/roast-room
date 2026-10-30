@@ -9,6 +9,7 @@ export const SEATS = [];
 
 // Public (paid, web) edition: seats appear as archetypes, with the person they are modelled on in fine print.
 export const PUBLIC = process.env.PUBLIC_MODE === "1";
+export const ARCHETYPE_NAMES = process.env.ARCHETYPES === "1"; // optional: show seats as archetypes instead of real names
 const ARCHETYPES = {
   bezos: ["The Long-Game Strategist", "LG"], graham: ["The Startup Builder", "SB"], hormozi: ["The Offer Maker", "OM"],
   garyvee: ["The Attention Hunter", "AH"], martell: ["The Time Buyer", "TB"], wickman: ["The Operator", "OP"],
@@ -28,7 +29,7 @@ export function loadRoster() {
   if (stat.mtimeMs === rosterStamp && SEATS.length) return SEATS;
   const r = JSON.parse(fs.readFileSync(ROSTER, "utf8"));
   let seats = (r.seats || []).filter((s) => s.key && s.slug && fs.existsSync(path.join(AGENTS_DIR, `council-${s.key}.md`)));
-  if (PUBLIC) seats = seats.map(publicSeat);
+  if (PUBLIC && ARCHETYPE_NAMES) seats = seats.map(publicSeat);
   SEATS.splice(0, SEATS.length, ...seats);
   for (const k of Object.keys(byKey)) delete byKey[k];
   for (const s of SEATS) byKey[s.key] = s;
