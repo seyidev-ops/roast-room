@@ -4,7 +4,7 @@ services:
   - type: web
     name: roast-room
     runtime: node
-    plan: starter
+    plan: free        # switch to "starter" (about $7 a month) before taking real payments: free sleeps when idle
     branch: public-web
     buildCommand: "echo no build needed"
     startCommand: npm start
