@@ -1,0 +1,30 @@
+# Roast Room, public (paid) edition on Render.
+# Render dashboard ▸ New ▸ Blueprint ▸ pick this repo and the "public-web" branch, then fill in the secret values it asks for.
+services:
+  - type: web
+    name: roast-room
+    runtime: node
+    plan: starter
+    branch: public-web
+    buildCommand: "echo no build needed"
+    startCommand: npm start
+    healthCheckPath: /api/seats
+    envVars:
+      - key: PUBLIC_MODE
+        value: "1"
+      - key: ANTHROPIC_API_KEY        # from console.anthropic.com (pay-as-you-go API, not the Claude subscription)
+        sync: false
+      - key: PAYSTACK_SECRET_KEY      # Paystack ▸ Settings ▸ API Keys (live secret key)
+        sync: false
+      - key: ROAST_PAY_LINK           # the Paystack payment page for one roast
+        sync: false
+      - key: ROAST_ADMIN_CODE         # a private word that lets you test without paying: open the room with ?code=<word>
+        sync: false
+      - key: ROAST_PRICE_NGN
+        value: "15000"
+      - key: ROAST_PRICE_USD
+        value: "10"
+      - key: SITE_URL
+        value: "https://oluwaseyiashiru.com/"
+      - key: MAX_RUNNING
+        value: "3"

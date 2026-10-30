@@ -97,11 +97,55 @@ const state = {
   cards: { 1: {}, 2: {}, 3: {} }, replaying: false, verdict: null, links: [], geo: {}, setup: null, wait: null,
 };
 
+// ------------------------------------------------------------- public (paid) edition
+function setupPublic() {
+  const q = new URLSearchParams(location.search);
+  const ref = q.get("reference") || q.get("trxref"), code = q.get("code");
+  try {
+    if (ref) sessionStorage.setItem("roastRef", ref);
+    if (code) sessionStorage.setItem("roastCode", code);
+    state.ref = sessionStorage.getItem("roastRef") || "";
+    state.code = sessionStorage.getItem("roastCode") || "";
+  } catch { state.ref = ref || ""; state.code = code || ""; }
+  if (ref || code) history.replaceState(null, "", location.pathname);
+  document.body.classList.add("public");
+  const disc = document.querySelector(".disclaimer"); if (disc) disc.textContent = "Advisors are simulations modelled on the public work of well-known founders and investors. They are not those people, are not affiliated with or endorsed by them, and do not speak for them. Not financial or legal advice.";
+  $("#historyBtn").hidden = true; $("#usage").hidden = true;
+  const P = state.pay || {}, ngn = "₦" + Number(P.priceNgn || 15000).toLocaleString("en-NG");
+  $("#waiting").innerHTML = `
+    <span class="pulse"><i></i>The room is open</span>
+    <h2 data-type>Got a business idea? Let the council roast it.</h2>
+    <p>Seven advisors modelled on famous founders and investors pull your idea apart, argue it out over three rounds, and hand you a scored verdict you can download as a PDF. Right here on your phone.</p>
+    <div class="buy"><span class="price">${esc(ngn)} <small>about $${esc(String(P.priceUsd || 10))} · per roast</small></span>
+    <a class="convene" href="${esc(P.link || "#")}" ${P.link ? "" : 'aria-disabled="true"'}>Book my roast</a></div>
+    <div class="row"><button class="ghost" type="button" id="waitGuide">How it works</button><button type="button" id="waitHistory" hidden></button><a class="ghost" href="${esc(P.site || "/")}">Back to Oluwaseyi Ashiru</a></div>
+    <p class="fine">Advisors are simulations modelled on public work. They are not the real people and are not endorsed by them.</p>`;
+  const comp = $("#composer");
+  comp.querySelector("h2").textContent = "Payment received. Now tell the council your idea.";
+  comp.querySelector("#prompt").placeholder = "What is the idea, who is it for, how will it make money, what you have (cash, time, team), and what you most want to know. Example: Should I start a laundry pickup service for students in Abuja at ₦5,000 a bag?";
+  comp.querySelector(".mode").hidden = true;
+  $("#convene").textContent = "Start my roast";
+  const s = (() => { try { return sessionStorage.getItem("roastSession"); } catch { return null; } })();
+  if (s && state.ref) setTimeout(() => attach(s), 300); // came back mid-roast: pick it up again
+}
+const PUBLIC_GUIDE = `
+  <h2>How the Roast Room works</h2>
+  <ol class="steps">
+    <li><span>Book your roast. You pay once, by card or bank transfer.</span></li>
+    <li><span>Describe your idea: what it is, who it is for, how it makes money, and what you have to work with.</span></li>
+    <li><span>A Chair reads it, picks the advisors who fit your idea, and sets out your options.</span></li>
+    <li><span>The advisors argue over three rounds: openings, debate, and a vote. You watch it live.</span></li>
+    <li><span>You get a scored verdict: the call, the reasons, who disagreed, and your next steps. Download it as a PDF.</span></li>
+  </ol>
+  <p class="muted">It takes about five to ten minutes. Keep this page open while the council works. The advisors are simulations modelled on the public work of well-known founders and investors; they are not those people. This is not financial or legal advice.</p>`;
+
 // ------------------------------------------------------------- boot
 async function boot() {
   const r = await refreshSeats();
   state.runner = r.runner;
-  if (r.runner === "api" && !r.hasKey) toast("No ANTHROPIC_API_KEY found in .env. Add it and restart the server.");
+  state.public = !!r.public; state.pay = r.pay || {};
+  if (state.public) setupPublic();
+  else if (r.runner === "api" && !r.hasKey) toast("No ANTHROPIC_API_KEY found in .env. Add it and restart the server.");
   renderSeats(state.board);
   renderSamples();
   bindUI();
@@ -242,10 +286,12 @@ function bindUI() {
     if (prompt.length < 10) return toast("Give the council a real decision, at least a sentence.");
     const mode = $('input[name="mode"]:checked').value;
     $("#convene").disabled = true;
-    const r = await fetch("/api/council", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ prompt, mode }) });
+    const r = await fetch("/api/council", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ prompt, mode, ref: state.ref, code: state.code }) });
     const j = await r.json();
     $("#convene").disabled = false;
     if (!r.ok) return toast(j.error || "Could not start the council.");
+    if (j.resumed) toast("Picking up your roast where it is.");
+    try { sessionStorage.setItem("roastSession", j.id); } catch {}
     attach(j.id);
   });
   const openFrom = (e) => { const b = e.target.closest("[data-seat]"); if (b) openCard(b.dataset.seat); };
@@ -325,8 +371,9 @@ function reset() {
   hideWait();
   $("#stage").classList.remove("live");
   $("#topic").hidden = true;
-  $("#composer").hidden = state.runner !== "api";
-  $("#waiting").hidden = state.runner === "api";
+  const paid = !state.public || state.ref || state.code;
+  $("#composer").hidden = state.runner !== "api" || !paid;
+  $("#waiting").hidden = state.runner === "api" && paid;
   $("#caption").hidden = true;
   $("#cruxes").hidden = true;
   $("#plate").hidden = true;
@@ -334,7 +381,7 @@ function reset() {
   $("#newBtn").hidden = true;
   $("#verdictSheet").hidden = true;
   $("#panelHead").textContent = "Getting started";
-  $("#feed").innerHTML = GUIDE;
+  $("#feed").innerHTML = state.public ? `<div class="guide"><div class="guide-sec">${PUBLIC_GUIDE.replace("<h2>", "<h4>").replace("</h2>", "</h4>")}</div></div>` : GUIDE;
   $$(".vote").forEach((b) => b.remove());
   renderSeats(state.board);
   $$(".seat").forEach((el) => { el.classList.remove("absent", "speaking", "thinking", "addressed"); $(".bust", el).dataset.shape = "base"; });
@@ -796,7 +843,7 @@ async function replay(id) {
 // ------------------------------------------------------------- waiting on Claude Code
 // A live council goes quiet for minutes while the seats write in parallel. Instead of a
 // frozen table, say what is happening, how long it has been, and what each seat is weighing.
-const SAME_TIME = "The advisors all write at the same time in Claude Code. Their lines play here as soon as the round is in.";
+const SAME_TIME = "The advisors all write at the same time. Their lines play here as soon as the round is in.";
 function waitCopy(phase) {
   const n = state.setup?.mode === "quick" ? 2 : 3;
   return {
@@ -842,7 +889,7 @@ function tickWait() {
   $("#wcTime").textContent = clock(elapsed);
   $("#wcHead").textContent = head;
   $("#wcSub").textContent = sub;
-  $("#wcNudge").hidden = elapsed < 4 * 60 * 1000;
+  $("#wcNudge").hidden = state.public || elapsed < 4 * 60 * 1000;
   const round = Number((w.phase.match(/^round(\d)$/) || [])[1]) || 0;
   const bar = $("#wcBar").parentElement;
   const muse = $("#wcMuse");
@@ -873,7 +920,7 @@ function tickWait() {
 }
 
 function openGuide() {
-  $("#guideBody").innerHTML = GUIDE;
+  $("#guideBody").innerHTML = state.public ? PUBLIC_GUIDE : GUIDE;
   const d = $("#guideDialog");
   if (!d.open) d.showModal();
 }

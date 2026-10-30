@@ -6,6 +6,19 @@ import { AGENTS_DIR, BRAINS_DIR, ROSTER } from "./env.mjs";
 // byKey are filled in place, so a seat added while the room is running shows up on the next
 // read without a restart.
 export const SEATS = [];
+
+// Public (paid, web) edition: seats appear as archetypes, with the person they are modelled on in fine print.
+export const PUBLIC = process.env.PUBLIC_MODE === "1";
+const ARCHETYPES = {
+  bezos: ["The Long-Game Strategist", "LG"], graham: ["The Startup Builder", "SB"], hormozi: ["The Offer Maker", "OM"],
+  garyvee: ["The Attention Hunter", "AH"], martell: ["The Time Buyer", "TB"], wickman: ["The Operator", "OP"],
+  buffett: ["The Capital Guardian", "CG"], naval: ["The Leverage Thinker", "LT"], sanchez: ["The Deal Buyer", "DB"],
+  leila: ["The Team Builder", "TM"], blakely: ["The Brand Founder", "BF"], musk: ["The First-Principles Builder", "FP"],
+};
+function publicSeat(s) {
+  const a = ARCHETYPES[s.key] || [`The ${s.pillar.split(",")[0]} Advisor`, (s.initials || "").slice(0, 2)];
+  return { ...s, modelledOn: s.name, name: a[0], short: a[0].replace(/^The /, ""), initials: a[1] };
+}
 export const byKey = {};
 export const BOARD = { mode: "default", default: [] };
 let rosterStamp = 0;
@@ -14,7 +27,8 @@ export function loadRoster() {
   try { stat = fs.statSync(ROSTER); } catch { throw new Error(`roster not found at ${ROSTER}`); }
   if (stat.mtimeMs === rosterStamp && SEATS.length) return SEATS;
   const r = JSON.parse(fs.readFileSync(ROSTER, "utf8"));
-  const seats = (r.seats || []).filter((s) => s.key && s.slug && fs.existsSync(path.join(AGENTS_DIR, `council-${s.key}.md`)));
+  let seats = (r.seats || []).filter((s) => s.key && s.slug && fs.existsSync(path.join(AGENTS_DIR, `council-${s.key}.md`)));
+  if (PUBLIC) seats = seats.map(publicSeat);
   SEATS.splice(0, SEATS.length, ...seats);
   for (const k of Object.keys(byKey)) delete byKey[k];
   for (const s of SEATS) byKey[s.key] = s;
